@@ -1,43 +1,46 @@
 import mariadb from "mariadb";
 import express from "express";
 import cors from "cors";
-import fetch from "node-fetch";
 
 const app = express();
 
-// Habilitar CORS y leer body
+// Habilitar CORS
 app.use(cors());
-app.use(express.json()); 
+app.use(express.json()); // Middleware global para procesar solicitudes JSON
 
-// Crear credenciales de conexión a mariadb
+// Crear credenciales de conexión a MySQL
 const pool = mariadb.createPool({
-	host: "db",
-	user: "caixa",
-	password: "caixa",
-	database: "caixa_enginyers",
-	connectionLimit: 5,
-	allowPublicKeyRetrieval: true,
-	ssl: false,
+  host: "db",
+  user: "caixa",
+  password: "caixa",
+  database: "caixa_enginyers",
+  connectionLimit: 5,
+  allowPublicKeyRetrieval: true,
+  ssl: false,
 });
 
-// Función para obtener datos de la tabla municipio
+// Función para obtener los datos de la tabla municipio
 async function getMunicipio() {
   let conn;
   try {
     conn = await pool.getConnection();
     console.log("Conectado a MariaDB!");
 
+    // Obtener todos los datos de la tabla municipio
     const rows = await conn.query("SELECT * FROM municipio");
 
+    // Calcular valores mínimo y máximo para cada columna numérica
     const minMaxValues = {};
     const allData = [...rows];
 
+    // Recorremos las filas y calculamos los min y max para cada columna numérica
     if (rows.length > 0) {
       const columns = Object.keys(rows[0]);
 
       columns.forEach((col) => {
         const columnValues = rows.map((row) => row[col]);
 
+        // Filtrar solo valores numéricos
         const numericValues = columnValues.filter((value) => !isNaN(value));
 
         if (numericValues.length > 0) {
@@ -48,15 +51,40 @@ async function getMunicipio() {
       });
     }
 
-    return [minMaxValues, allData];
+    // Agregar las nuevas columnas de impacto social y económico a cada fila
+    const updatedData = rows.map(row => {
+      return {
+        ...row,
+        impacto_social: calculateImpactoSocial(row), // Calcular impacto social
+        impacto_economico: calculateImpactoEconomico(row), // Calcular impacto económico
+      };
+    });
+
+    // Devolvemos un array con el primer objeto siendo los valores min/max, 
+    // y el segundo objeto los datos completos con las nuevas columnas
+    return [minMaxValues, updatedData];
   } catch (err) {
     console.error("Error de conexión:", err);
-    return [[], []]; 
+    return [[], []]; // En caso de error, devolvemos dos arrays vacíos
   } finally {
     if (conn) conn.release();
   }
 }
 
+// Función para calcular el impacto social
+function calculateImpactoSocial(row) {
+	if (row.poblacion != 0 && row.num_oficinas != 0) {
+		return (row.poblacion/row.num_oficinas)
+	}
+}
+
+// Función para calcular el impacto económico
+function calculateImpactoEconomico(row) {
+	if (row.poblacion != 0 && row.sueldo_medio != 0) {
+		return (row.sueldo_medio/row.poblacion)
+	}
+	return 0;
+}
 
 // Endpoint para obtener datos de la tabla municipio
 app.get("/municipio", async (req, res) => {
