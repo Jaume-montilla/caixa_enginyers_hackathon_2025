@@ -9,7 +9,7 @@ app.use(cors());
 app.use(express.json());
 
 const pool = mariadb.createPool({
-  host: 'localhost',
+  host: 'db',
   user: 'caixa',
   password: 'caixa',
   database: 'caixa_enginyers',
@@ -24,7 +24,7 @@ async function testConnection() {
     conn = await pool.getConnection();
     console.log("Connected to MariaDB!");
 
-    const rows = await conn.query("SELECT * from municipio");
+    const rows = await conn.query("select * from municipio");
     return(rows);
   } catch (err) {
     console.error("Connection error:", err);
@@ -44,7 +44,7 @@ app.get('/municipio', async (req, res) => {
   }
 });
 
-const port = 3000;
+const port = 3001;
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });

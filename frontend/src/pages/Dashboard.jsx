@@ -75,7 +75,7 @@ const Dashboard = () => {
  
     const url = "https://cdn.jsdelivr.net/npm/es-atlas/es/municipalities.json"; 
 
-    fetch('http://localhost:3000/municipio', {
+    fetch('http://localhost:3001/municipio', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'

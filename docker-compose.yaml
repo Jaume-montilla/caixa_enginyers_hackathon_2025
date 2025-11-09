@@ -1,26 +1,19 @@
 services:
-  db:
-    image: mariadb:10.5
-    container_name: mariadb
-    environment:
-      MYSQL_ROOT_PASSWORD: # your root passwd
-      MYSQL_DATABASE: caixa_enginyers
-      MYSQL_USER: caixa
-      MYSQL_PASSWORD: caixa
+  frontend:
+    build: ./frontend
+    container_name: react-frontend
     ports:
-      - "3307:3306"
-    volumes:
-      - mariadb-data:/var/lib/mysql
-      - ./mariadb/init:/backend/db.sql
+      - "5173:5173"  
+    depends_on:
+      - backend
     networks:
       - app-network
 
-  # Servicio del backend (Express)
   backend:
     build: ./backend
     container_name: express-app
     ports:
-      - "3001:3000"
+      - "3001:3001"  
     environment:
       DB_HOST: db
       DB_USER: caixa
@@ -31,14 +24,18 @@ services:
     networks:
       - app-network
 
-  # Servicio del frontend (React + Vite)
-  frontend:
-    build: ./frontend
-    container_name: react-frontend
+  db:
+    image: mariadb:10.5
+    container_name: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: caixa_enginyers
+      MYSQL_USER: caixa
+      MYSQL_PASSWORD: caixa
     ports:
-      - "8001:80"
-    depends_on:
-      - backend
+      - "3306:3306"  
+    volumes:
+      - ./backend/db.sql:/docker-entrypoint-initdb.d/database.sql
     networks:
       - app-network
 

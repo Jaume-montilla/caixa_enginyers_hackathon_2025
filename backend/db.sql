@@ -481,7 +481,7 @@ INSERT INTO `municipio` VALUES
 ('Blascosancho',407,NULL,NULL,NULL,NULL,NULL,NULL,NULL,98),
 ('Bohodon, El',408,NULL,NULL,NULL,NULL,NULL,NULL,NULL,112),
 ('Bohoyo',409,NULL,NULL,NULL,NULL,NULL,NULL,NULL,215),
-('Bonilla de la Sierra',410,NULL,NULL,NULL,NULL,NULL,NULL,NULL,163),
+('Bonilla de la Sierra',410,NULL,NULL,NULL,NULL,NULL,NULL,NULL,16-3),
 ('Brabos',411,NULL,NULL,NULL,NULL,NULL,NULL,NULL,37),
 ('Bularros',412,NULL,NULL,NULL,NULL,NULL,NULL,NULL,55),
 ('Burgohondo',413,1,NULL,NULL,NULL,NULL,NULL,NULL,1256),
@@ -8211,6 +8211,10 @@ commit;
 -- Table structure for table `municipio_colindante`
 --
 
+CREATE USER 'caixa'@'localhost' IDENTIFIED BY 'caixa';
+GRANT ALL PRIVILEGES ON caixa_enginyers.* TO 'caixa'@'localhost';
+
+
 DROP TABLE IF EXISTS `municipio_colindante`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -8242,4 +8246,4 @@ commit;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
--- Dump completed on 2025-11-08 20:37:27
+-- Dump completed on 2025-11-08 20:37:2
