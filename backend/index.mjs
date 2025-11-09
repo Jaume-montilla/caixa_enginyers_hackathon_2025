@@ -109,7 +109,7 @@ app.put("/chat", async (req, res) => {
 	}
 });
 
-const API_KEY = "zpka_ad9538b8b6384eac8b5ecfce5efe559b_7b8e688a";
+const API_KEY = 
 const API_URL = "https://api.publicai.co/v1/chat/completions";
 
 // Función para interactuar con el API del chatbot
